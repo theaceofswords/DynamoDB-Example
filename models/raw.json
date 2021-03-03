@@ -1,0 +1,32 @@
+[
+    {
+        "Year" : 2013,
+        "Title" : "Good movie",
+        "Plot" : "Plot of the movie.",
+        "Rating" : 4.5
+    },
+    {
+		"Year":      2012,
+		"Title":     "movie 2",
+		"Plot":      "some plot",
+		"Rating":    5,
+		"Director":  "director name",
+ 		"LeadActor": "actor name",
+		"Duration":  157
+        	
+    },
+    {   "Year": 2015,
+        "Title":  "The New Movie",
+        "Plot":   "something happens.",
+    	"Rating": 0.0
+    },
+    {
+        "Year":     2012,
+		"Title":    "movie 3",
+		"Plot":     "some other plot",
+		"Rating":   3,
+   		"Director": "director name2", 
+   		"Duration": 176
+	}
+
+]

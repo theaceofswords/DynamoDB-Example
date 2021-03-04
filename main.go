@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 	"code.qburst.com/navaneeth.k/DynamoDB-example/repository"
 )
 
@@ -13,6 +14,18 @@ func main() {
 	movieTitle := "movie 2"
 	repository.GetRecord(movieTitle, year)
 
+	movie := models.Movie{
+		Year:      2012,
+		Title:     "movie 2",
+		Category:  "action",
+		Plot:      "lots of fighting",
+		Rating:    4,
+		Director:  "so and so",
+		LeadActor: "the other guy",
+		Duration:  193,
+	}
+	repository.UpdateRecord(movie)
+
 	//repository.DeleteRecord()
-	//repository.GetRecord()
+	repository.GetRecord(movieTitle, year)
 }

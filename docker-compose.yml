@@ -1,14 +1,41 @@
 version: '3'
 services:
-  dynamodb-local:
-    # command: "-jar DynamoDBLocal.jar -sharedDb -optimizeDbBeforeStartup -dbPath ./data"
-    image: "amazon/dynamodb-local:latest"
-    container_name: dynamodb-local
-    ports:
-      - "8000:8000"
+  app:
+    container_name: crud_api
+    build: .
+    ports: 
+      - 8080:8080 
+    restart: on-failure
     volumes:
-      - "./docker/dynamodb:/home/dynamodblocal/data"
-    working_dir: /home/dynamodblocal
+      - api:/usr/src/app/
+    depends_on:
+      - dynamodb-local         
+    networks:
+      - network1
+
+
+
+  dynamodb-local:
+      # command: "-jar DynamoDBLocal.jar -sharedDb -optimizeDbBeforeStartup -dbPath ./data"
+      image: "amazon/dynamodb-local:latest"
+      container_name: dynamodb-local
+      ports:
+        - "8000:8000"
+      volumes:
+        - "dynamo-db:/home/dynamodblocal/data"
+      working_dir: /home/dynamodblocal
+      networks:
+        - network1
+
+
+volumes:
+  api:
+  dynamo-db:   
+  
+networks:
+  network1:
+    driver: bridge  
+
     
 
      

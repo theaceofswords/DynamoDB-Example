@@ -4,15 +4,12 @@ import (
 	"fmt"
 	"strconv"
 
-	"code.qburst.com/navaneeth.k/DynamoDB-example/config"
 	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-func UpdateRecord(movie models.Movie) {
-	svc := config.Connect()
-	tableName := "Movies"
+func (r *repo) UpdateRecord(movie models.Movie) {
 
 	input := &dynamodb.UpdateItemInput{
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
@@ -45,7 +42,7 @@ func UpdateRecord(movie models.Movie) {
 		UpdateExpression: aws.String("set Rating = :r, Director = :d, LeadActor = :a, Category = :c, Plot = :p"),
 	}
 
-	_, err := svc.UpdateItem(input)
+	_, err := r.svc.UpdateItem(input)
 	if err != nil {
 		fmt.Println(err.Error())
 		return

@@ -9,7 +9,7 @@ import (
 	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 )
 
-func InitaliseData() {
+func (r *repo) InitaliseData() {
 
 	raw, err := ioutil.ReadFile("./models/raw.json")
 
@@ -23,34 +23,7 @@ func InitaliseData() {
 	json.Unmarshal(raw, &movies)
 
 	for _, movie := range movies {
-		AddRecord(movie)
+		r.AddRecord(movie)
 	}
 
-	// 	newMovie := models.Movie{Year: 2015,
-	// 		Title:  "The New Movie",
-	// 		Plot:   "something happens.",
-	// 		Rating: 0.0,
-	// 	}
-	// 	repository.AddRecord(newMovie)
-
-	// 	newMovie = models.Movie{
-	// 		Year:      2012,
-	// 		Title:     "movie 2",
-	// 		Plot:      "some plot",
-	// 		Rating:    5,
-	// 		Director:  "director name",
-	// 		LeadActor: "actor name",
-	// 		Duration:  157,
-	// 	}
-	// 	repository.AddRecord(newMovie)
-
-	// 	newMovie = models.Movie{
-	// 		Year:     2012,
-	// 		Title:    "movie 3",
-	// 		Plot:     "some other plot",
-	// 		Rating:   3,
-	// 		Director: "director name2",
-	// 		Duration: 176,
-	// 	}
-	// 	repository.AddRecord(newMovie)
 }

@@ -4,20 +4,17 @@ import (
 	"errors"
 	"fmt"
 
-	"code.qburst.com/navaneeth.k/DynamoDB-example/config"
 	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-func GetRecord(movieName string, movieYear string) (models.Movie, error) {
-	svc := config.Connect()
+func (r *repo) GetRecord(movieName string, movieYear string) (models.Movie, error) {
 
-	tableName := "Movies"
 	movie := models.Movie{}
 
-	result, err := svc.GetItem(&dynamodb.GetItemInput{
+	result, err := r.svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]*dynamodb.AttributeValue{
 			"Year": {

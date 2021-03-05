@@ -6,8 +6,8 @@ import (
 
 func main() {
 
-	//repository.CreateTable()
-	//repository.InitaliseData()
+	// repository.CreateTable()
+	// repository.InitaliseData()
 
 	// year := "2012"
 	// movieTitle := "movie 2"

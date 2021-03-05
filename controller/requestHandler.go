@@ -5,17 +5,25 @@ import (
 	"fmt"
 	"net/http"
 
+	"code.qburst.com/navaneeth.k/DynamoDB-example/config"
 	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 	"code.qburst.com/navaneeth.k/DynamoDB-example/repository"
 )
 
+type handler struct {
+	crud repository.CRUD
+}
+
 func RequestHandler() {
-	http.HandleFunc("/movies", requestHandler)
+	svc := config.Connect()
+	crud := repository.CreateRepository(svc)
+	t := handler{crud}
+	http.HandleFunc("/movies", t.requestHandler)
 	fmt.Println("Running,.. ")
 	http.ListenAndServe(":8080", nil)
 }
 
-func requestHandler(w http.ResponseWriter, r *http.Request) {
+func (t *handler) requestHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
@@ -23,7 +31,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		year := r.URL.Query().Get("year")
 		//fmt.Println(title, year)
 
-		movie, err := repository.GetRecord(title, year)
+		movie, err := t.crud.GetRecord(title, year)
 		if err != nil {
 			msg := models.ErrorMsg{err.Error(), http.StatusNotFound, "Record does not exist"}
 			w.WriteHeader(http.StatusNotFound)
@@ -41,7 +49,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			json.NewEncoder(w).Encode(msg)
 		} else {
-			repository.AddRecord(movie)
+			t.crud.AddRecord(movie)
 			msg := models.ErrorMsg{"nil", http.StatusOK, "Record added"}
 			json.NewEncoder(w).Encode(msg)
 		}
@@ -54,7 +62,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			json.NewEncoder(w).Encode(msg)
 		} else {
-			repository.UpdateRecord(movie)
+			t.crud.UpdateRecord(movie)
 			msg := models.ErrorMsg{"nil", http.StatusOK, "Record Updated"}
 			json.NewEncoder(w).Encode(msg)
 		}
@@ -63,7 +71,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		year := r.URL.Query().Get("year")
 		//fmt.Println(title, year)
 
-		err := repository.DeleteRecord(title, year)
+		err := t.crud.DeleteRecord(title, year)
 		if err != nil {
 			msg := models.ErrorMsg{err.Error(), http.StatusNotFound, "Record does not exist"}
 			json.NewEncoder(w).Encode(msg)

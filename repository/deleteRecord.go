@@ -3,15 +3,12 @@ package repository
 import (
 	"fmt"
 
-	"code.qburst.com/navaneeth.k/DynamoDB-example/config"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-func DeleteRecord(movieName string, movieYear string) error {
-	svc := config.Connect()
+func (r *repo) DeleteRecord(movieName string, movieYear string) error {
 
-	tableName := "Movies"
 	input := &dynamodb.DeleteItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"Year": {
@@ -24,7 +21,7 @@ func DeleteRecord(movieName string, movieYear string) error {
 		TableName: aws.String(tableName),
 	}
 
-	_, err := svc.DeleteItem(input)
+	_, err := r.svc.DeleteItem(input)
 	if err != nil {
 		fmt.Println("Error Deleting Item")
 		fmt.Println(err.Error())

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"code.qburst.com/navaneeth.k/DynamoDB-example/config"
 	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -50,23 +51,46 @@ func (r *repo) UpdateRecord(movie models.Movie) {
 	}
 	fmt.Println("Successfully updated")
 
+	tableDescrIp := &dynamodb.DescribeTableInput{
+		TableName: aws.String("Movies"),
+	}
+
+	tblDescr, err := r.svc.DescribeTable(tableDescrIp)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	streamArn := *tblDescr.Table.LatestStreamArn
+	fmt.Println(streamArn)
+
+	streamDescIp := &dynamodbstreams.DescribeStreamInput{
+		StreamArn: aws.String(streamArn),
+	}
+	//fmt.Println(streamDescIp)
+
+	streamDescr, err := r.svc2.DescribeStream(streamDescIp)
+	//fmt.Println(streamDescr)
+	shardId := *streamDescr.StreamDescription.Shards[0].ShardId
+	fmt.Println(shardId)
+
 	shardInput := &dynamodbstreams.GetShardIteratorInput{
-		StreamArn:         aws.String("arn:aws:dynamodb:ddblocal:000000000000:table/Movies/stream/2021-03-10T04:25:19.082"),
-		ShardId:           aws.String("shardId-00000001615350319121-a639bb13"),
+		StreamArn:         aws.String(streamArn),
+		ShardId:           aws.String(shardId),
 		ShardIteratorType: aws.String("LATEST"),
 	}
-	shardId, err := r.svc2.GetShardIterator(shardInput)
+	shardIterator, err := r.svc2.GetShardIterator(shardInput)
 
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	str := fmt.Sprintf("%v", shardId)
-	fmt.Println(str)
+	// str := fmt.Sprintf("%v", shardIterator)
+
+	fmt.Println(*shardIterator.ShardIterator)
 
 	recInput := &dynamodbstreams.GetRecordsInput{
-		//ShardIterator: aws.String("arn:aws:dynamodb:ddblocal:000000000000:table/Movies/stream/2021-03-10T04:25:19.082|001|c2hhcmRJZC0wMDAwMDAwMTYxNTM1MDMxOTEyMS1hNjM5YmIxM3wwMDAwMDAwMDAwMDAwMDAwMDAwMDV8MDAwMDAwMDAwMDAwMDAwMDAxNjE1MzUwNTAwNTU3"),
-		ShardIterator: aws.String(str),
+		//ShardIterator: aws.String(*shardIterator.ShardIterator),
+		ShardIterator: aws.String("arn:aws:dynamodb:ddblocal:000000000000:table/Movies/stream/2021-03-10T14:57:44.267|001|c2hhcmRJZC0wMDAwMDAwMTYxNTM4ODI2NDMwMC02MWFmM2VjMHwwMDAwMDAwMDAwMDAwMDAwMDAwMDZ8MDAwMDAwMDAwMDAwMDAwMDAxNjE1Mzg5NzU1MTY2"),
 	}
+	//recInput.SetShardIterator("arn:aws:dynamodb:ddblocal:000000000000:table/Movies/stream/2021-03-10T14:57:44.267|001|c2hhcmRJZC0wMDAwMDAwMTYxNTM4ODI2NDMwMC02MWFmM2VjMHwwMDAwMDAwMDAwMDAwMDAwMDAwMDZ8MDAwMDAwMDAwMDAwMDAwMDAxNjE1Mzg4MjY5MDE0")
 
 	result, err := r.svc2.GetRecords(recInput)
 	if err != nil {
@@ -74,6 +98,16 @@ func (r *repo) UpdateRecord(movie models.Movie) {
 	}
 
 	fmt.Println(result)
-	fmt.Printf("%T\n", result)
+	strc := models.Records{
+		OldImage: result.String(),
+	}
+
+	psqlDB := config.PsqlConnect()
+	defer psqlDB.Close()
+
+	err = psqlDB.Create(&strc).Error
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 }

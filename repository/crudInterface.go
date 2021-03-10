@@ -3,6 +3,7 @@ package repository
 import (
 	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodbstreams"
 )
 
 type CRUD interface {
@@ -11,14 +12,17 @@ type CRUD interface {
 	UpdateRecord(movie models.Movie)
 	DeleteRecord(movieName string, movieYear string) error
 	InitaliseData()
+	CreateTable()
 }
 
 type repo struct {
-	svc *dynamodb.DynamoDB
+	svc  *dynamodb.DynamoDB
+	svc2 *dynamodbstreams.DynamoDBStreams
 }
 
-func CreateRepository(dDB *dynamodb.DynamoDB) CRUD {
+func CreateRepository(dDB *dynamodb.DynamoDB, dDBS *dynamodbstreams.DynamoDBStreams) CRUD {
 	return &repo{
-		svc: dDB,
+		svc:  dDB,
+		svc2: dDBS,
 	}
 }

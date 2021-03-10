@@ -15,8 +15,10 @@ type handler struct {
 }
 
 func RequestHandler() {
-	svc := config.Connect()
-	crud := repository.CreateRepository(svc)
+	svc, svc2 := config.Connect()
+	crud := repository.CreateRepository(svc, svc2)
+	//crud.CreateTable()
+	//crud.InitaliseData()
 	t := handler{crud}
 	http.HandleFunc("/movies", t.requestHandler)
 	fmt.Println("Running,.. ")
@@ -53,6 +55,7 @@ func (t *handler) requestHandler(w http.ResponseWriter, r *http.Request) {
 			msg := models.ErrorMsg{"nil", http.StatusOK, "Record added"}
 			json.NewEncoder(w).Encode(msg)
 		}
+
 	case "PUT":
 		var movie models.Movie
 

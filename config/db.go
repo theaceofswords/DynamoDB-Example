@@ -41,6 +41,7 @@ func Connect() *dynamodb.DynamoDB {
 	}
 	// Create DynamoDB client
 	svc := dynamodb.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:8000")})
+	fmt.Println("conn +1")
 
 	return svc
 }

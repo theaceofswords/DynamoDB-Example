@@ -1,22 +1,20 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
-	"os"
 
-	"code.qburst.com/navaneeth.k/DynamoDB-example/config"
 	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-func GetRecord(movieName string, movieYear string) {
-	svc := config.Connect()
+func (r *repo) GetRecord(movieName string, movieYear string) (models.Movie, error) {
 
-	tableName := "Movies"
+	movie := models.Movie{}
 
-	result, err := svc.GetItem(&dynamodb.GetItemInput{
+	result, err := r.svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]*dynamodb.AttributeValue{
 			"Year": {
@@ -29,20 +27,21 @@ func GetRecord(movieName string, movieYear string) {
 	})
 	if err != nil {
 		fmt.Println(err.Error())
-		
-		os.Exit(1)
+
+		return movie, err
 	}
 	if result.Item == nil {
 		fmt.Println("Not found")
-		os.Exit(1)
+		err = errors.New("Not found")
+		return movie, err
 	}
-
-	movie := models.Movie{}
 
 	err = dynamodbattribute.UnmarshalMap(result.Item, &movie)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to unmarshal Record, %v", err))
+		return movie, err
 	}
 
-	fmt.Println(movie)
+	//fmt.Println(movie)
+	return movie, err
 }

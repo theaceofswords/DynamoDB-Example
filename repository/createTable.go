@@ -4,16 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"code.qburst.com/navaneeth.k/DynamoDB-example/config"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-func CreateTable() {
-
-	svc := config.Connect()
-
-	tableName := "Movies"
+func (r *repo) CreateTable() {
 
 	input := &dynamodb.CreateTableInput{
 		AttributeDefinitions: []*dynamodb.AttributeDefinition{
@@ -43,7 +38,7 @@ func CreateTable() {
 		TableName: aws.String(tableName),
 	}
 
-	_, err := svc.CreateTable(input)
+	_, err := r.svc.CreateTable(input)
 	if err != nil {
 		fmt.Println("Got error calling CreateTable:")
 		fmt.Println(err.Error())

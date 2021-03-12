@@ -13,6 +13,46 @@ import (
 
 func (r *repo) UpdateRecord(movie models.Movie) {
 
+
+
+	tableDescrIp := &dynamodb.DescribeTableInput{
+		TableName: aws.String(tableName),
+	}
+
+	tblDescr, err := r.svc.DescribeTable(tableDescrIp)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	streamArn := *tblDescr.Table.LatestStreamArn
+	fmt.Println(streamArn)
+
+	streamDescIp := &dynamodbstreams.DescribeStreamInput{
+		StreamArn: aws.String(streamArn),
+	}
+	//fmt.Println(streamDescIp)
+
+	streamDescr, err := r.svc2.DescribeStream(streamDescIp)
+	//fmt.Println(streamDescr)
+	shardId := *streamDescr.StreamDescription.Shards[0].ShardId
+	fmt.Println(shardId)
+
+	shardInput := &dynamodbstreams.GetShardIteratorInput{
+		StreamArn:         aws.String(streamArn),
+		ShardId:           aws.String(shardId),
+		ShardIteratorType: aws.String("LATEST"),
+	}
+	shardIterator, err := r.svc2.GetShardIterator(shardInput)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+
+
+
+
+
+
 	input := &dynamodb.UpdateItemInput{
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
 			":r": {
@@ -44,51 +84,21 @@ func (r *repo) UpdateRecord(movie models.Movie) {
 		UpdateExpression: aws.String("set Rating = :r, Director = :d, LeadActor = :a, Category = :c, Plot = :p"),
 	}
 
-	_, err := r.svc.UpdateItem(input)
+	_, err = r.svc.UpdateItem(input)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 	fmt.Println("Successfully updated")
 
-	tableDescrIp := &dynamodb.DescribeTableInput{
-		TableName: aws.String("Movies"),
-	}
-
-	tblDescr, err := r.svc.DescribeTable(tableDescrIp)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	streamArn := *tblDescr.Table.LatestStreamArn
-	fmt.Println(streamArn)
-
-	streamDescIp := &dynamodbstreams.DescribeStreamInput{
-		StreamArn: aws.String(streamArn),
-	}
-	//fmt.Println(streamDescIp)
-
-	streamDescr, err := r.svc2.DescribeStream(streamDescIp)
-	//fmt.Println(streamDescr)
-	shardId := *streamDescr.StreamDescription.Shards[0].ShardId
-	fmt.Println(shardId)
-
-	shardInput := &dynamodbstreams.GetShardIteratorInput{
-		StreamArn:         aws.String(streamArn),
-		ShardId:           aws.String(shardId),
-		ShardIteratorType: aws.String("LATEST"),
-	}
-	shardIterator, err := r.svc2.GetShardIterator(shardInput)
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
+	
 	// str := fmt.Sprintf("%v", shardIterator)
 
 	fmt.Println(*shardIterator.ShardIterator)
 
 	recInput := &dynamodbstreams.GetRecordsInput{
-		//ShardIterator: aws.String(*shardIterator.ShardIterator),
-		ShardIterator: aws.String("arn:aws:dynamodb:ddblocal:000000000000:table/Movies/stream/2021-03-10T14:57:44.267|001|c2hhcmRJZC0wMDAwMDAwMTYxNTM4ODI2NDMwMC02MWFmM2VjMHwwMDAwMDAwMDAwMDAwMDAwMDAwMDZ8MDAwMDAwMDAwMDAwMDAwMDAxNjE1Mzg5NzU1MTY2"),
+		ShardIterator: aws.String(*shardIterator.ShardIterator),
+		//ShardIterator: aws.String("arn:aws:dynamodb:ddblocal:000000000000:table/Movies/stream/2021-03-10T14:57:44.267|001|c2hhcmRJZC0wMDAwMDAwMTYxNTM4ODI2NDMwMC02MWFmM2VjMHwwMDAwMDAwMDAwMDAwMDAwMDAwMDZ8MDAwMDAwMDAwMDAwMDAwMDAxNjE1Mzg5NzU1MTY2"),
 	}
 	//recInput.SetShardIterator("arn:aws:dynamodb:ddblocal:000000000000:table/Movies/stream/2021-03-10T14:57:44.267|001|c2hhcmRJZC0wMDAwMDAwMTYxNTM4ODI2NDMwMC02MWFmM2VjMHwwMDAwMDAwMDAwMDAwMDAwMDAwMDZ8MDAwMDAwMDAwMDAwMDAwMDAxNjE1Mzg4MjY5MDE0")
 
@@ -99,7 +109,9 @@ func (r *repo) UpdateRecord(movie models.Movie) {
 
 	fmt.Println(result)
 	strc := models.Records{
-		OldImage: result.String(),
+		OldImage: result.Records[0].Dynamodb.String(),
+		NewImage: result.Records[0].Dynamodb.String(),
+		EventId: *result.Records[0].EventID,
 	}
 
 	psqlDB := config.PsqlConnect()

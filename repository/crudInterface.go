@@ -4,7 +4,10 @@ import (
 	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodbstreams"
+	"github.com/jinzhu/gorm"
 )
+
+var nextIterator string
 
 type CRUD interface {
 	AddRecord(movie models.Movie)
@@ -13,16 +16,20 @@ type CRUD interface {
 	DeleteRecord(movieName string, movieYear string) error
 	InitaliseData()
 	CreateTable()
+	GetIterator() string
+	psqlWrite(string)
 }
 
 type repo struct {
 	svc  *dynamodb.DynamoDB
 	svc2 *dynamodbstreams.DynamoDBStreams
+	psqlDB *gorm.DB
 }
 
-func CreateRepository(dDB *dynamodb.DynamoDB, dDBS *dynamodbstreams.DynamoDBStreams) CRUD {
+func CreateRepository(dDB *dynamodb.DynamoDB, dDBS *dynamodbstreams.DynamoDBStreams,pDB *gorm.DB) CRUD {
 	return &repo{
 		svc:  dDB,
 		svc2: dDBS,
+		psqlDB: pDB,
 	}
 }

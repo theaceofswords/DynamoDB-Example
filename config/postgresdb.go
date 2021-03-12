@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	//host = "docker-postgres" // while using docker
+	
 	host     = "localhost"
 	port     = 5432
 	user     = "postgres"

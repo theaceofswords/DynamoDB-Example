@@ -15,6 +15,16 @@ var tableName string = "Movies"
 
 func (r *repo) AddRecord(movie models.Movie) {
 
+
+	var shardIterator string
+    if nextIterator == ""{
+		fmt.Println("new iterator")
+		shardIterator = r.GetIterator()
+	}else{
+		
+		shardIterator = nextIterator
+	}
+
 	// marshall the data into a map of AttributeValue objects.
 	av, err := dynamodbattribute.MarshalMap(movie)
 	if err != nil {
@@ -40,5 +50,6 @@ func (r *repo) AddRecord(movie models.Movie) {
 	year := strconv.Itoa(movie.Year)
 
 	fmt.Println("Successfully added '" + movie.Title + "' (" + year + ") to table " + tableName)
+	r.psqlWrite(shardIterator)
 
 }

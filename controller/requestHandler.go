@@ -16,7 +16,10 @@ type handler struct {
 
 func RequestHandler() {
 	svc, svc2 := config.Connect()
-	crud := repository.CreateRepository(svc, svc2)
+	psqlDB := config.PsqlConnect()
+	defer psqlDB.Close()
+	crud := repository.CreateRepository(svc, svc2,psqlDB)
+	
 	//crud.CreateTable()
 	//crud.InitaliseData()
 	t := handler{crud}

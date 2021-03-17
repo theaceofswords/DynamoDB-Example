@@ -17,7 +17,8 @@ func (r *repo) AddRecord(movie models.Movie) {
 
 
 	var shardIterator string
-    if nextIterator == ""{
+	
+    if nextIterator == "" || r.iteratorExpCheck(shardIterator){
 		fmt.Println("new iterator")
 		shardIterator = r.GetIterator()
 	}else{

@@ -15,7 +15,7 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "user123"
-	dbname   = "datb2"
+	dbname   = "datb3"
 )
 
 var (

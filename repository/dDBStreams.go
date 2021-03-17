@@ -26,10 +26,15 @@ func (r *repo)GetIterator() string{
 		StreamArn: aws.String(streamArn),
 	}
 	//fmt.Println(streamDescIp)
+	var shardId string
 
 	streamDescr, err := r.svc2.DescribeStream(streamDescIp)
 	//fmt.Println(streamDescr)
-	shardId := *streamDescr.StreamDescription.Shards[0].ShardId
+	for i,id := range streamDescr.StreamDescription.Shards{
+		
+		fmt.Println("************************************************=>",i)
+	    shardId = *id.ShardId
+	}
 	fmt.Println(shardId)
 
 	shardInput := &dynamodbstreams.GetShardIteratorInput{
@@ -42,7 +47,7 @@ func (r *repo)GetIterator() string{
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-
+    fmt.Println("Done")
 	return *shardIterator.ShardIterator
 
 }

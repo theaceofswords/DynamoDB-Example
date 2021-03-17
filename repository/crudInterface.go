@@ -18,6 +18,8 @@ type CRUD interface {
 	CreateTable()
 	GetIterator() string
 	psqlWrite(string)
+	psqlRead(string)
+	iteratorExpCheck(string) bool
 }
 
 type repo struct {

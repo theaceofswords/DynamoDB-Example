@@ -10,7 +10,7 @@ import (
 func (r *repo) DeleteRecord(movieName string, movieYear string) error {
 
 	var shardIterator string
-    if nextIterator == ""{
+    if nextIterator == "" || r.iteratorExpCheck(shardIterator){
 		fmt.Println("new iterator")
 		shardIterator = r.GetIterator()
 	}else{

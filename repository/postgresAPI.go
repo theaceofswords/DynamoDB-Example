@@ -10,25 +10,16 @@ import(
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"encoding/json"
 	
-
-	// "errors"
-	// "strings"
 )
 
 func (r* repo) psqlWrite(shardIterator string){
-	// var shardIterator string
-    // if nextIterator == ""{
-	// 	shardIterator = r.GetIterator()
-	// }else{
-	// 	shardIterator = nextIterator
-	// }
 
 	recInput := &dynamodbstreams.GetRecordsInput{
 		ShardIterator: aws.String(shardIterator),
 		
 	}
 
-   // var expItrErr = errors.New("ExpiredIteratorException:")
+   
 
 	
 	result, err := r.svc2.GetRecords(recInput)
@@ -36,44 +27,14 @@ func (r* repo) psqlWrite(shardIterator string){
 		fmt.Println(err.Error())
 	}
 
-	// if err != nil {
-	// 	if  strings.Compare(err.Error(), expItrErr.Error()) == 0 {
-	// 		shardIterator = r.GetIterator()
-	// 	}else{
-	// 		fmt.Println(err.Error(),"=",expItrErr.Error())
-	// 	}
-	// }
-
-	// if err != nil{
-	// 	if aerr, ok := err.(awserr.Error); ok {
-	// 		switch aerr.Code() {
-	// 		case dynamodbstreams.ErrCodeExpiredIteratorException:
-	// 			shardIterator = r.GetIterator()
-	// 			recInput = &dynamodbstreams.GetRecordsInput{
-	// 				ShardIterator: aws.String(shardIterator),
-					
-	// 			}
-	// 			result, _ = r.svc2.GetRecords(recInput)
-	// 		default:
-	// 			fmt.Println(aerr.Error())
-	// 		}
-	// 	}else{
-	// 		fmt.Println(err.Error())
-	// 	}
-	// }
+	
 	nextIterator = *result.NextShardIterator
 
 	fmt.Println(result)
 	var strc models.Records
 
     for _,record := range result.Records{
-		// strc = models.Records{
-		// 	OldImage: fmt.Sprintf("%v",record.Dynamodb.OldImage),
-		// 	NewImage: fmt.Sprintf("%v",record.Dynamodb.NewImage),
-		// 	EventId: *record.EventID,
-		// 	EventName: *record.EventName,
-		// }
-
+		
 		var newImage models.Movie
         err = dynamodbattribute.UnmarshalMap(record.Dynamodb.NewImage, &newImage)
         if err != nil {
@@ -91,14 +52,13 @@ func (r* repo) psqlWrite(shardIterator string){
 	
 		
 		strc = models.Records{
-			OldImage: str1,
-		 	NewImage: str2,
+			OldImage: string(str1),
+		 	NewImage: string(str2),
 			EventId: *record.EventID,
 		 	EventName: *record.EventName,
 		}
 
-		fmt.Println(strc)
-
+		
 		
 		err = r.psqlDB.Create(&strc).Error
 		if err != nil {

@@ -1,8 +1,8 @@
 package models
 
 type Records struct {
-	OldImage []byte  `json:"OldImage"`
-	NewImage []byte `json:"NewImage"`
+	OldImage string  `json:"OldImage"`
+	NewImage string `json:"NewImage"`
 	EventId string   `json:"EventId"`
 	EventName string  `json:"EventName"`
 	s_no int `gorm:"primaryKey"`

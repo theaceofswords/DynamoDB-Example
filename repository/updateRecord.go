@@ -4,12 +4,27 @@ import (
 	"fmt"
 	"strconv"
 
+	// "code.qburst.com/navaneeth.k/DynamoDB-example/config"
 	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	
 )
 
 func (r *repo) UpdateRecord(movie models.Movie) {
+
+
+    var shardIterator string
+    if nextIterator == "" || r.iteratorExpCheck(shardIterator){
+		fmt.Println("new iterator")
+		shardIterator = r.GetIterator()
+	}else{
+		
+		shardIterator = nextIterator
+	}
+
+
+
 
 	input := &dynamodb.UpdateItemInput{
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
@@ -47,7 +62,11 @@ func (r *repo) UpdateRecord(movie models.Movie) {
 		fmt.Println(err.Error())
 		return
 	}
-
 	fmt.Println("Successfully updated")
+
+	r.psqlWrite(shardIterator)
+
+	
+	
 
 }

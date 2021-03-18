@@ -35,6 +35,10 @@ func (r *repo) CreateTable() {
 			ReadCapacityUnits:  aws.Int64(10),
 			WriteCapacityUnits: aws.Int64(10),
 		},
+		StreamSpecification: &dynamodb.StreamSpecification{
+			StreamEnabled:  aws.Bool(true),
+			StreamViewType: aws.String("NEW_AND_OLD_IMAGES"),
+		},
 		TableName: aws.String(tableName),
 	}
 
@@ -46,4 +50,5 @@ func (r *repo) CreateTable() {
 	}
 
 	fmt.Println("Created the table", tableName)
+
 }

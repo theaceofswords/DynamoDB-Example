@@ -6,9 +6,6 @@ import (
 
 func main() {
 
-	// repository.CreateTable()
-	// repository.InitaliseData()
-
 	// year := "2012"
 	// movieTitle := "movie 2"
 	// repository.GetRecord(movieTitle, year)

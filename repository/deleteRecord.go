@@ -9,6 +9,15 @@ import (
 
 func (r *repo) DeleteRecord(movieName string, movieYear string) error {
 
+	var shardIterator string
+    if nextIterator == "" || r.iteratorExpCheck(shardIterator){
+		fmt.Println("new iterator")
+		shardIterator = r.GetIterator()
+	}else{
+		
+		shardIterator = nextIterator
+	}
+
 	input := &dynamodb.DeleteItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"Year": {
@@ -29,5 +38,6 @@ func (r *repo) DeleteRecord(movieName string, movieYear string) error {
 	}
 
 	fmt.Println("Deleted")
+	r.psqlWrite(shardIterator)
 	return nil
 }

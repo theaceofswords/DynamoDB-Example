@@ -9,10 +9,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodbstreams"
 	"gopkg.in/yaml.v2"
 )
 
-func Connect() *dynamodb.DynamoDB {
+func Connect() (*dynamodb.DynamoDB, *dynamodbstreams.DynamoDBStreams) {
 	// Initialize a session
 	// sess := session.Must(session.NewSessionWithOptions(session.Options{
 	// 	SharedConfigState: session.SharedConfigEnable,
@@ -41,7 +42,8 @@ func Connect() *dynamodb.DynamoDB {
 	}
 	// Create DynamoDB client
 	svc := dynamodb.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:8000")})
+	svc2 := dynamodbstreams.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:8000")})
 	fmt.Println("conn +1")
 
-	return svc
+	return svc, svc2
 }

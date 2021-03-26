@@ -41,8 +41,8 @@ func Connect() (*dynamodb.DynamoDB, *dynamodbstreams.DynamoDBStreams) {
 		os.Exit(1)
 	}
 	// Create DynamoDB client
-	svc := dynamodb.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:8000")})
-	svc2 := dynamodbstreams.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:8000")})
+	svc := dynamodb.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:4566")})
+	svc2 := dynamodbstreams.New(sess, &aws.Config{Endpoint: aws.String("http://localhost:4566")})
 	fmt.Println("conn +1")
 
 	return svc, svc2

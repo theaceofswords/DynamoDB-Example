@@ -4,14 +4,18 @@ import (
 	"fmt"
 	"strconv"
 
-	// "code.qburst.com/navaneeth.k/DynamoDB-example/config"
+	
 	"code.qburst.com/navaneeth.k/DynamoDB-example/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	
+	
 )
 
+
+
 func (r *repo) UpdateRecord(movie models.Movie) {
+	
 
 
     var shardIterator string

@@ -3,3 +3,5 @@ dynamodb_cred:
 aws_id: dfsfsd7w492rh
 aws_secret_key: ebfiwubiu42353f
 region: ap-south-1
+lambda_server_port: 8000
+lambda_api: 12314

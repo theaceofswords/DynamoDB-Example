@@ -11,6 +11,7 @@ import (
 )
 
 func (r *repo)GetIterator() string{
+	
 	tableDescrIp := &dynamodb.DescribeTableInput{
 		TableName: aws.String(tableName),
 	}
@@ -18,6 +19,7 @@ func (r *repo)GetIterator() string{
 	tblDescr, err := r.svc.DescribeTable(tableDescrIp)
 	if err != nil {
 		fmt.Println(err.Error())
+		
 	}
 	streamArn := *tblDescr.Table.LatestStreamArn
 	fmt.Println(streamArn)

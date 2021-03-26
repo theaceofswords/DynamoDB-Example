@@ -25,7 +25,7 @@ func RequestHandler() {
 	t := handler{crud}
 	http.HandleFunc("/movies", t.requestHandler)
 	fmt.Println("Running,.. ")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8081", nil)
 }
 
 func (t *handler) requestHandler(w http.ResponseWriter, r *http.Request) {

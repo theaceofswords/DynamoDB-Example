@@ -57,10 +57,11 @@ func (r* repo) psqlWrite(shardIterator string){
 			EventId: *record.EventID,
 		 	EventName: *record.EventName,
 		}
+		fmt.Println(strc)
 
 		
 		
-		err = r.psqlDB.Create(&strc).Error
+		 err = r.psqlDB.Create(&strc).Error
 		if err != nil {
 			fmt.Println(err.Error())
 		}

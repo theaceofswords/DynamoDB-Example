@@ -20,8 +20,8 @@ func RequestHandler() {
 	defer psqlDB.Close()
 	crud := repository.CreateRepository(svc, svc2,psqlDB)
 	
-	//crud.CreateTable()
-	//crud.InitaliseData()
+//	crud.CreateTable()
+	crud.InitaliseData()
 	t := handler{crud}
 	http.HandleFunc("/movies", t.requestHandler)
 	fmt.Println("Running,.. ")

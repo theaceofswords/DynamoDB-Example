@@ -68,7 +68,7 @@ func (r *repo) UpdateRecord(movie models.Movie) {
 	}
 	fmt.Println("Successfully updated")
 
-	r.psqlWrite(shardIterator)
+	//r.psqlWrite(shardIterator)
 
 	
 	
